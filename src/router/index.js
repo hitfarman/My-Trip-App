@@ -23,8 +23,24 @@ const router = createRouter({
     {
       path: '/message',
       component: () => import("@/views/message/message.vue")
+    },
+    {
+      path: '/city',
+      component: () => import("@/views/city/city.vue"),
+      /** 在开发中常用到的一种方案: 当进行路由切换的时候,如果界面上有些东西显示的不一样,可以用route这个对象来完成需要的操作;
+       其它路由,因为没有设置meta,其中的meta.hideTabbar拿到的值是undefined,取反就为true,tabbar就可以显示出来
+       */
+      meta: {
+        hideTabbar: true
+      }
     }
   ]
 })
+
+// router.beforeEach((to, from) => {
+//   switch(to) {
+//     case '/home'
+//   }
+// })
 
 export default router

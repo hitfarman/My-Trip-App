@@ -1,7 +1,26 @@
 :root {
   --primary-color: #ff9854;
+  --line-color: #f5f5f5;
+
+  /* 全局修改: 修改search样式 
+    修改别人的变量,为了让它生效,需要加上 !important
+  */
+  --van-search-left-icon-color: var(--primary-color) !important;
 }
 
 body {
   font-size: 14px;
+}
+
+.top_page {
+  position: relative;
+  z-index: 9;
+  height: 100vh;
+  /** 没有背景,相当于是透明的 */ 
+  background-color: #fff;
+  /** 设置只在元素city div内滚动,不要进行页面的滚动 
+    不设置的话,相当于是整个页面在滚动,会把 city div滚上去,滚上去后,下面的tabbar就依然能看到
+    所以,这里设置元素内部滚动就可以了
+  */
+  overflow-y: auto;
 }

@@ -4,18 +4,19 @@
     <div class="banner">
       <img src="@/assets/img/home/banner.webp" alt="">
     </div>
-    <div class="location">
-      <div class="city">广州</div>
-      <div class="position">
-        <span class="text">我的位置</span>
-        <img src="@/assets/img/home/icon_location.png" alt="">
-      </div>
-    </div>
+    <home-search-box/>
   </div>
 </template>
 
 <script setup>
-  import HomeNavBar from './cpns/home-nav-bar.vue'
+import HomeNavBar from './cpns/home-nav-bar.vue'
+import HomeSearchBox from './cpns/home-search-box.vue'
+import useHomeStore from '@/store/modules/home';
+
+  // 发送网络请求
+  // 1.热门建议
+  const homeStore = useHomeStore()
+  homeStore.fetchHotSuggestData()
 
 </script>
 
@@ -27,30 +28,6 @@
       }
     }
 
-    .location {
-      display: flex;
-      align-items: center;
-      height: 44px;
-      padding: 0 20px;
 
-      .city {
-        flex: 1;
-      }
-      .position {
-        width: 74px;
-        display: flex;
-        align-items: center;
-
-        .text {
-          font-size: 12px;
-        }
-
-        img {
-          width: 18px;
-          height: 18px;
-          margin-left: 5px;
-        }
-      }
-    }
   }
 </style>

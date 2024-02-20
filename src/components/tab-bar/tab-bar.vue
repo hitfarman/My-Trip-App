@@ -6,7 +6,7 @@
           <template #default>
             <span>{{ item.text }}</span>
           </template>
-          <template #icon="props">
+          <template #icon>
             <img :src="imageUrl(index, item)" alt="">
           </template>
         </van-tabbar-item>
