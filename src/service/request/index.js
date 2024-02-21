@@ -1,23 +1,35 @@
 import axios from "axios"
 import { BASE_URL, TIMEOUT } from "./config"
+import useMainStore from "@/store/modules/main"
 
-// 方法一: 封装一个函数
-// export default function request() { }
-
-// 方法二: 封装一个类
+const mainStore = useMainStore()
 class HYRequest {
   constructor(baseURL, timeout = TIMEOUT) {
-    // axios.defaults.baseURL = xxxx //给默认实例配置baseUrl,一般不这么做
 
     this.instance = axios.create({
       baseURL,
       timeout
     })
+
+    this.instance.interceptors.request.use((config) => {
+      mainStore.isLoading = true
+      return config
+    }, (err) => {
+      return err
+    })
+
+    this.instance.interceptors.response.use((res) => {
+      mainStore.isLoading = false
+      return res.data
+    }, (err) => {
+      mainStore.isLoading = false
+      return err
+    })
   }
   request(config) {
     return new Promise((resolve, reject) => {
       this.instance.request(config).then(res => {
-        resolve(res.data)
+        resolve(res)
       }).catch(err => {
         reject(err)
       })

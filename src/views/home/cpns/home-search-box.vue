@@ -14,14 +14,14 @@
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
-          <span class="time">{{ startDate }}</span>
+          <span class="time">{{ startDateStr }}</span>
         </div>
         <div class="stay">共{{ stayCount }}晚</div>
       </div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
-          <span class="time">{{ endDate }}</span>
+          <span class="time">{{ endDateStr }}</span>
         </div>
       </div>
     </div>
@@ -51,65 +51,73 @@
         </div>
       </template>
     </div>
+
+    <!-- 搜索按钮 -->
+    <div class="section search-btn">
+      <div class="btn" @click="searchBtnClick">开始搜索</div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router'
 
 import useCityStore from '@/store/modules/city';
 import { formatMonthDay, getDiffDays } from '@/utils/formatDate';
 import useHomeStore from '@/store/modules/home';
+import useMainStore from '@/store/modules/main';
 
 const router = useRouter()
 
-// const fetchLocationName = async (lat,lng) => {
-//     await fetch(
-//       'https://www.mapquestapi.com/geocoding/v1/reverse?key=`SUA CHAVE`&location='+lat+'%2C'+lng+'&outFormat=json&thumbMaps=false',
-//     )
-//       .then((response) => response.json())
-//       .then((responseJson) => {
-//         console.log(
-//           'ADDRESS GEOCODE is BACK!! => ' + JSON.stringify(responseJson),
-//         );
-//       });
-//   };
+// 位置/城市
+const cityClick = () => {
+  router.push('/city')
+}
+const positionClick = () => {
+  navigator.geolocation.getCurrentPosition(res => {
+    console.log("获取位置成功:", res)
+  }, err => {
+    console.log("获取位置失败:", err)
+  })
+}
+const cityStore = useCityStore()
+const { currentCity } = storeToRefs(cityStore)
 
-  // 位置/城市
-  const cityClick = () => {
-    router.push('/city')
-  }
-  const positionClick = () => {
-    navigator.geolocation.getCurrentPosition(res => {
-      console.log("获取位置成功:", res)
-    }, err => {
-      console.log("获取位置失败:", err)
-    })
-  }
-  const cityStore = useCityStore()
-  const { currentCity } = storeToRefs(cityStore)
+// 日期范围的处理
+const mainStore = useMainStore()
+const { startDate, endDate } = storeToRefs(mainStore)
 
-  // 日期范围的处理
-  const nowDate = new Date()
-  const newDate = new Date()
-  newDate.setDate(nowDate.getDate() + 1)
+const startDateStr = computed(() => formatMonthDay(startDate.value))
+const endDateStr = computed(() => formatMonthDay(endDate.value))
+const stayCount = ref(getDiffDays(startDate.value, endDate.value))
 
-  const startDate = ref(formatMonthDay(nowDate))
-  const endDate = ref(formatMonthDay(newDate))
-  const stayCount = ref(getDiffDays(nowDate, newDate))
+const showCanlendar = ref(false)
+const onConfirm = (values) => {
+  // 1.设置日期
+  mainStore.startDate = values[0]
+  mainStore.endDate = values[1]
+  stayCount.value = getDiffDays(values[0], values[1])
+  
+  // 2.隐藏日历
+  showCanlendar.value = false
+}
 
-  const showCanlendar = ref(false)
-  const onConfirm = (values) => {
-    startDate.value = formatMonthDay(values[0])
-    endDate.value = formatMonthDay(values[1])
-    stayCount.value = getDiffDays(values[0], values[1])
-    showCanlendar.value = false
-  }
+// 热门建议
+const { hotSuggests } = storeToRefs(useHomeStore())
 
-  // 热门建议
-  const { hotSuggests } = storeToRefs(useHomeStore())
+// 开始搜索
+const searchBtnClick = () => {
+  router.push({
+    path: "/search",
+    query: {
+      startDate: startDate.value,
+      endDate: endDate.value,
+      currentCity: currentCity.value.cityName
+    }
+  })
+}
 
 </script>
 
@@ -206,12 +214,32 @@ const router = useRouter()
 
 .hot-suggest {
   margin: 10px 0;
+  height: auto;
+
   .item {
     padding: 4px 8px;
     margin: 3px;
     border-radius: 14px;
     font-size: 12px;
     line-height: 1;
+  }
+}
+
+.search-btn {
+  .btn {
+    width: 342px;
+    height: 38px;
+    max-height: 50px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 38px;
+    text-align: center;
+    border-radius: 20px;
+    color: #fff;
+    /* 颜色的渐变是: background-image(背景图片),并不是background-color/background 
+      因为颜色渐变在很多地方都是有用到的,所以, 可以把它定义成一个变量
+    */
+    background-image: var(--theme-linear-gradient);
   }
 }
 

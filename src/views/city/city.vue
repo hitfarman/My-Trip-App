@@ -73,7 +73,7 @@ const currentGroup = computed(() => allCities.value[tabActive.value])
   // 局部滚动方案
   .content {
     height: calc(100vh - 98px);
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
 }

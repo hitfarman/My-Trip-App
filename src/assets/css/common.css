@@ -1,10 +1,12 @@
 :root {
   --primary-color: #ff9854;
   --line-color: #f5f5f5;
+  --theme-linear-gradient: linear-gradient(90deg, #fa8c1d, #fcaf3f);
 
   /* 全局修改: 修改search样式 
     修改别人的变量,为了让它生效,需要加上 !important
   */
+  --van-primary-color: var(--primary-color);
   --van-search-left-icon-color: var(--primary-color) !important;
 }
 
