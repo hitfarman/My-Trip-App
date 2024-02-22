@@ -208,10 +208,6 @@ const searchBtnClick = () => {
   }
 }
 
-.bottom-gray-line {
-  border-bottom: 1px solid var(--line-color);
-}
-
 .hot-suggest {
   margin: 10px 0;
   height: auto;

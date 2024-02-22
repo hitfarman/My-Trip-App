@@ -21,7 +21,9 @@ import { throttle } from 'underscore'
 //   })
 // }
 
-export default function useScroll() {
+export default function useScroll(elRef) {
+  let el = window
+
   const isReachBottom = ref(false)
 
   const clientHeight = ref(0)
@@ -30,22 +32,29 @@ export default function useScroll() {
 
   // 节流
   const scrollListenerHandler = throttle(() => {
-    clientHeight.value = Math.round(document.documentElement.clientHeight)
-    scrollTop.value = Math.round(document.documentElement.scrollTop)
-    scrollHeight.value = Math.round(document.documentElement.scrollHeight)
+    if (el === window) {
+      clientHeight.value = Math.round(document.documentElement.clientHeight)
+      scrollTop.value = Math.round(document.documentElement.scrollTop)
+      scrollHeight.value = Math.round(document.documentElement.scrollHeight)
+    } else {
+      clientHeight.value = Math.round(el.clientHeight)
+      scrollTop.value = Math.round(el.scrollTop)
+      scrollHeight.value = Math.round(el.scrollHeight)
+    }
     // console.log(clientHeight.value, scrollTop.value, scrollHeight.value)
     if (clientHeight.value + scrollTop.value + 1 >= scrollHeight.value) {
-      console.log("滚动到底部了")
+      // console.log("滚动到底部了")
       isReachBottom.value = true
     }
  }, 100)
 
   onMounted(() => {
-    window.addEventListener("scroll", scrollListenerHandler )
+    if (elRef) el = elRef.value
+    el.addEventListener("scroll", scrollListenerHandler )
   })
   
   onUnmounted(() => {
-    window.removeEventListener("scroll", scrollListenerHandler)
+    el.removeEventListener("scroll", scrollListenerHandler)
   })
 
   return { isReachBottom, clientHeight, scrollTop, scrollHeight }

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" ref="homeRef">
     <home-nav-bar/>
     <div class="banner">
       <img src="@/assets/img/home/banner.webp" alt="">
@@ -13,8 +13,13 @@
   </div>
 </template>
 
+<script>
+  export default { name: "home" }
+</script>
+
 <script setup>
-import { computed, watch } from "vue";
+
+import { computed, watch, ref, onActivated } from "vue";
 
 import HomeNavBar from './cpns/home-nav-bar.vue'
 import HomeSearchBox from './cpns/home-search-box.vue'
@@ -31,13 +36,14 @@ homeStore.fetchHotSuggestData()
 homeStore.fetchCategoriesData()
 homeStore.fetchHouseListData()
 
-// 监听window窗口的滚动
+// 监听window窗口滚动到底部
+const homeRef = ref()
 // 1.离开页面时,需要移除监听
 // 2.如果别的页面也在类似的监听,会编写重复的代码
 // useScroll(() => {
 //   homeStore.fetchHouseListData()
 // })
-const { isReachBottom, scrollTop } = useScroll()
+const { isReachBottom, scrollTop } = useScroll(homeRef)
 watch(isReachBottom, (newValue) => {
   if (newValue) {
     homeStore.fetchHouseListData().then(() => {
@@ -59,10 +65,21 @@ const isShowSearchBar = computed(() => {
 })
 
 
+// 当跳转回home时,保留原来的位置
+onActivated(() => {
+  homeRef.value?.scrollTo({
+    top: scrollTop.value
+  })
+})
+
 </script>
 
 <style lang="less" scoped>
   .home {
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+
     padding-bottom: 60px;
   }
 
