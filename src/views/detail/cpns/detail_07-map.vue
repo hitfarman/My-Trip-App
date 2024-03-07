@@ -20,12 +20,16 @@ const props = defineProps({
 const mapRef = ref()
 
 onMounted(() => {
+try {
   // const map = new BMapGL.Map("baidumap"); // 创建地图实例 
   const map = new BMapGL.Map(mapRef.value); // 创建地图实例 
   const point = new BMapGL.Point(props.position.longitude, props.position.latitude); //创建点坐标 
   map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
   const marker = new BMapGL.Marker(point);  
   map.addOverlay(marker)
+} catch (error) {
+  console.log(error)
+}
 })
 
 </script>
